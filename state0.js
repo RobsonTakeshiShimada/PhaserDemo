@@ -12,7 +12,6 @@ demo.state0.prototype = {
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);//ativa a Física no jogo
         game.stage.backgroundColor = '#808080';//fundo da tela original state 0
-        console.log('state0');//diz no console que está no state 0
         game.world.setBounds(0, 0, 2813, 1000);//coloca as fronteiras do nosso mundo que é o comprimento da imagem de background
         addChangeStateEventListeners();//coloca ativadores de eventos
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;//ajusta tamanho da tela
@@ -58,6 +57,7 @@ demo.state0.prototype = {
 };
 
 function changeState(i, stateNum){
+    console.log('state ' + stateNum);
     game.state.start('state' + stateNum);
 }
 

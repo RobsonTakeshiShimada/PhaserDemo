@@ -1,15 +1,59 @@
 demo.state1 = function () {};
+
+var cursors, vel = 500, rocks, grass;
+
 demo.state1.prototype = {
-    preload: function () {},
-    create: function () {
-        game.stage.backgroundColor = '#191970';
-        console.log('state1');
-        addChangeStateEventListeners();
+    preload: function () {
+        game.load.tilemap('field', 'assets/tilemaps/field.json', null, Phaser.Tilemap.TILED_JSON);//traz o arquivo json para o html 
+        game.load.image('grassTiles', 'assets/tilemaps/grassTiles.png');//traz os grassTiles para o html
+        game.load.image('rockTiles', 'assets/tilemaps/rockTiles.png');//traz os rockTiles para o html
+        game.load.image('adam', 'assets/sprites/adam.png');
     },
-    update: function () {}
+    create: function () {
+        game.physics.startSystem(Phaser.Physics.ARCADE);//começa a física
+        game.stage.backgroundColor = '#191970';
+        addChangeStateEventListeners();
+        
+        var map = game.add.tilemap('field');//cria a variável mapa
+        map.addTilesetImage('grassTiles');//adiciona o tileset de grama
+        map.addTilesetImage('rockTiles');//adiicona o tileset de pedras
+        
+        grass = map.createLayer('grass');//cria a variável de grama
+        rocks = map.createLayer('rocks');//cria a variável de pedra
+        
+        map.setCollisionBetween(1, 9, true, 'rocks');//evita passar nas pedras. No JSON é possível entender que 1-9 representa as pedras
+        map.setCollision(11, true, 'grass');//usa between quando tem mais de um número representando os obstaculos
+        
+        adam = game.add.sprite(200,200,'adam');
+        adam.scale.setTo(0.2, 0.2);//muda escala do adam
+        game.physics.enable(adam);//destrava a física
+        
+        cursors = game.input.keyboard.createCursorKeys();
+    },
+    update: function () {
+        game.physics.arcade.collide(adam, rocks, function(){console.log('Hitting rocks!');});
+        game.physics.arcade.collide(adam, grass, function(){console.log('Hitting grass!');});
+
+        //função de movimento do personagem
+        if(cursors.up.isDown){
+            adam.y -= speed;
+            adam.body.velocity.y = -vel;
+        }
+        else if(cursors.down.isDown){
+            adam.body.velocity.y = vel;
+        }
+        else{
+            adam.body.velocity.y = 0;
+        }
+        if(cursors.left.isDown){
+            adam.body.velocity.x = -vel;
+        }
+        else if(cursors.right.isDown){
+            adam.body.velocity.x = vel;
+        }
+        else{
+            adam.body.velocity.x = 0;
+        }
+    }
 };
 
-function changeState(i, stateNum){
-    console.log(i);
-    game.state.start('state' + stateNum);
-}
